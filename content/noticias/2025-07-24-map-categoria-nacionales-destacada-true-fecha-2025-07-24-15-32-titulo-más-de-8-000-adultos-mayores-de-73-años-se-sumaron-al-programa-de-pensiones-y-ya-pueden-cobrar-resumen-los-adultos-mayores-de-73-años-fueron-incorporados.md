@@ -63,6 +63,7 @@ contenido: >-
 categoria: nacionales
 imagen: /uploads/adultos-mayores.webp
 destacada: true
+autor: Redacción ÚH
 slug: mas-de-8-000-adultos-mayores-de-73-anos-se-sumaron-al-programa-de-pensiones-y-ya-pueden-cobrar
 fecha: 2025-07-24 15:32
 ---
