@@ -60,7 +60,7 @@ contenido: >-
 
 
   También señaló que se registra un promedio de entre 800 y 1.000 bajas por mes por fallecimiento, lo que va generando también disponibilidad presupuestaria para las nuevas inclusiones.
-categoria: nacionales
+categoria: Nacionales
 imagen: /uploads/adultos-mayores.webp
 destacada: true
 autor: Redacción ÚH
