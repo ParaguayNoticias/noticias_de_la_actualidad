@@ -32,6 +32,9 @@ collections:
           - { label: "Política", value: "politica" }
           - { label: "Destacados", value: "destacados" }
           - { label: "Cultura", value: "cultura" }
+          - { label: "Tecnologia", value: "tecnología" }
+          - { label: "Nacionales", value: "nacionales" }
+          - { label: "Internacionales", value: "internacionales" }
         default: "destacados"
         hint: "Selecciona la categoría principal"
       - label: "Imagen Principal"
