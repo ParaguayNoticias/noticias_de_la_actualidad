@@ -4,19 +4,28 @@ import NoticiaCard from '../../../components/noticias/NoticiaCard';
 import Paginacion from '../../../components/ui/Paginacion';
 import { supabase } from '../../../lib/supabase';
 
+// Definir las categorías válidas
+const CATEGORIAS_VALIDAS: Categoria[] = ['Política', 'Deportes', 'Tecnología', 'Cultura', 'Nacionales', 'Internacionales'];
+
 interface PageProps {
   params: { categoria: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
 export default async function SeccionPage({ params, searchParams }: PageProps) {
-  const categoria = params.categoria as Categoria;
-  const pagina = searchParams.pagina ? parseInt(searchParams.pagina as string) : 1;
+  const categoria = decodeURIComponent(params.categoria) as Categoria;
+  
+  // Manejar el parámetro de página de forma segura
+  const paginaParam = Array.isArray(searchParams.pagina) 
+    ? searchParams.pagina[0] 
+    : searchParams.pagina;
+  
+  const pagina = paginaParam ? parseInt(paginaParam) : 1;
+  
   const porPagina = 10;
   
   // Validar categoría
-  const categoriasValidas: Categoria[] = ['Destacadas','Política' , 'Deportes' , 'Tecnología' , 'Cultura' , 'Nacionales' , 'Internacionales'];
-  if (!categoriasValidas.includes(categoria)) {
+  if (!CATEGORIAS_VALIDAS.includes(categoria)) {
     return notFound();
   }
   
@@ -38,7 +47,7 @@ export default async function SeccionPage({ params, searchParams }: PageProps) {
   const paginacion = {
     paginaActual: pagina,
     totalPaginas,
-    baseUrl: `/seccion/${categoria}`
+    baseUrl: `/seccion/${encodeURIComponent(categoria)}`
   };
 
   return (
@@ -51,7 +60,11 @@ export default async function SeccionPage({ params, searchParams }: PageProps) {
         ))}
       </div>
       
-      <Paginacion paginacion={paginacion} />
+      {totalPaginas > 1 && (
+        <div className="mt-12">
+          <Paginacion paginacion={paginacion} />
+        </div>
+      )}
     </div>
   );
 }

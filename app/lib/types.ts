@@ -1,4 +1,4 @@
-export type Categoria = 'Destacadas' |'Política' | 'Deportes' | 'Tecnología' | 'Cultura' | 'Nacionales' | 'Internacionales';
+export type Categoria = 'Política' | 'Deportes' | 'Tecnología' | 'Cultura' | 'Nacionales' | 'Internacionales';
 
 export interface Noticia {
   id: number;
@@ -10,10 +10,5 @@ export interface Noticia {
   imagen_url: string;
   destacada: boolean;
   slug: string;
-}
-
-export interface Paginacion {
-  paginaActual: number;
-  totalPaginas: number;
-  baseUrl: string;
+  autor?: string; 
 }

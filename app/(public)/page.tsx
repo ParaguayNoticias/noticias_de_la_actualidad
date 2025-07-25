@@ -1,58 +1,59 @@
 import { Categoria } from '../lib/types';
-import NoticiaCard from '../components/noticias/NoticiaCard';
+import DestacadasSection from '../components/noticias/DestacadasSection';
 import { supabase } from '../lib/supabase';
+import NoticiaCard from '../components/noticias/NoticiaCard';
+
+// Definir las categorías
+const CATEGORIAS: Categoria[] = ['Política', 'Deportes', 'Tecnología', 'Cultura', 'Nacionales', 'Internacionales'];
 
 export default async function Home() {
-  // Obtener noticias destacadas
+  // Obtener 9 noticias destacadas (3 para el bloque especial + 6 para el grid)
   const { data: destacadas } = await supabase
     .from('noticias')
     .select('*')
     .eq('destacada', true)
     .order('fecha_publicacion', { ascending: false })
-    .limit(3);
+    .limit(9);
 
-  // Obtener noticias por categoría
-  const categorias: Categoria[] = ['Destacadas','Política' , 'Deportes' , 'Tecnología' , 'Cultura' , 'Nacionales' , 'Internacionales'];
+  // Obtener las noticias destacadas de cada categoría (para secciones inferiores)
   const secciones = await Promise.all(
-    categorias.map(async (categoria) => {
+    CATEGORIAS.map(async (categoria) => {
       const { data: noticias } = await supabase
         .from('noticias')
         .select('*')
         .eq('categoria', categoria)
         .order('fecha_publicacion', { ascending: false })
-        .limit(5);
+        .limit(3);
       return { categoria, noticias: noticias || [] };
     })
   );
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">Noticias Destacadas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {destacadas?.map(noticia => (
-            <NoticiaCard key={noticia.id} noticia={noticia} destacada />
-          ))}
-        </div>
-      </section>
-
+      {/* Sección de noticias destacadas con formato especial */}
+      <DestacadasSection destacadas={destacadas || []} />
+      
+      {/* Secciones por categoría */}
       {secciones.map(({ categoria, noticias }) => (
-        <section key={categoria} className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 capitalize">{categoria}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {noticias.map(noticia => (
-              <NoticiaCard key={noticia.id} noticia={noticia} />
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <a 
-              href={`/seccion/${categoria}`} 
-              className="inline-block px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-            >
-              Ver más noticias de {categoria}
-            </a>
-          </div>
-        </section>
+        noticias.length > 0 && (
+          <section key={categoria} className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold capitalize">{categoria}</h2>
+              <a 
+                href={`/seccion/${categoria}`} 
+                className="text-blue-600 hover:underline"
+              >
+                Ver todas
+              </a>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {noticias.map(noticia => (
+                <NoticiaCard key={noticia.id} noticia={noticia} />
+              ))}
+            </div>
+          </section>
+        )
       ))}
     </div>
   );

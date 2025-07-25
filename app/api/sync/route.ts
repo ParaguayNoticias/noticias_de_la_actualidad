@@ -27,6 +27,7 @@ export async function POST() {
         imagen_url: data.imagen,
         destacada: data.destacada || false,
         slug: slug,
+        autor: data.autor || '',
         fecha_publicacion: data.fecha ? new Date(data.fecha).toISOString() : new Date().toISOString()
       };
       
@@ -42,9 +43,16 @@ export async function POST() {
       }
     }
     
-    return NextResponse.json({ success: true, message: `${count}/${files.length} noticias sincronizadas` });
+    return NextResponse.json({ 
+      success: true, 
+      message: `${count}/${files.length} noticias sincronizadas` 
+    });
   } catch (error) {
     console.error('Error en sincronización:', error);
-    return NextResponse.json({ success: false, message: 'Error en sincronización' }, { status: 500 });
+    return NextResponse.json({ 
+      success: false, 
+      message: 'Error en sincronización',
+      error: error instanceof Error ? error.message : 'Error desconocido'
+    }, { status: 500 });
   }
 }

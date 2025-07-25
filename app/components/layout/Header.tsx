@@ -23,7 +23,7 @@ export default function Header() {
         
         {/* Menú de navegación */}
         <nav className="flex space-x-6 mb-4 md:mb-0">
-          <Link href="/seccion/destacadas" className="hover:text-blue-600">Destacadas</Link>
+          <Link href="/" className="hover:text-blue-600">Inicio</Link>
           <Link href="/seccion/politica" className="hover:text-blue-600">Política</Link>
           <Link href="/seccion/deportes" className="hover:text-blue-600">Deportes</Link>
           <Link href="/seccion/tecnologia" className="hover:text-blue-600">Tecnología</Link>
