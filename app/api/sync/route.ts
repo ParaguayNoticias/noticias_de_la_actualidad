@@ -1,95 +1,214 @@
-import { NextResponse } from 'next/server';
-import matter from 'gray-matter';
-import fs from 'fs';
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import path from 'path';
-import { supabase } from '../../lib/supabase';
+import { promises as fs } from 'fs';
+import matter from 'gray-matter';
 
-export async function POST() {
-  try {
-    const contentDir = path.join(process.cwd(), 'content/noticias');
-    const files = fs.readdirSync(contentDir);
-    
-    console.log(`Iniciando sincronización con ${files.length} archivos encontrados`);
-    
-    let count = 0;
-    let errorCount = 0;
-    
-    for (const file of files) {
-      if (!file.endsWith('.md')) continue;
-      
-      const filePath = path.join(contentDir, file);
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      const { data, content } = matter(fileContent);
-      
-      // Extraer slug del nombre del archivo (nuevo formato)
-      const slugFromFilename = file.replace('.md', '').split('-').slice(3).join('-');
-      
-      // Usar slug del frontmatter si existe, si no del nombre del archivo
-      const slug = data.slug || slugFromFilename;
-      
-      // Validar y truncar slug si es necesario
-      const validSlug = slug.slice(0, 60).replace(/[^a-z0-9-]/g, '-');
-      
-      console.log(`Procesando: ${file}`);
-      console.log('Slug original:', slug, 'Slug válido:', validSlug);
-      
-      console.log(`Procesando: ${slug}`);
-      console.log('Datos:', {
-        titulo: data.titulo,
-        categoria: data.categoria,
-        imagen: data.imagen,
-        destacada: data.destacada
-      });
-      
-      // Validar datos esenciales
-      if (!data.titulo || !data.categoria || !data.imagen) {
-        console.error(`Datos incompletos para: ${slug}`);
-        errorCount++;
-        continue;
-      }
-      
-      const noticiaData = {
-        titulo: data.titulo,
-        resumen: data.resumen,
-        contenido: content,
-        categoria: data.categoria,
-        imagen_url: data.imagen,
-        destacada: data.destacada || false,
-        slug: validSlug,
-        autor: data.autor || 'Redacción',
-        fecha_publicacion: data.fecha ? new Date(data.fecha).toISOString() : new Date().toISOString()
+export const runtime = 'nodejs';
+
+// ====== ENV ======
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
+const SYNC_TOKEN = process.env.SYNC_TOKEN;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn(
+    '[sync] Faltan SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY / SUPABASE_SERVICE_KEY'
+  );
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY!);
+
+const CONTENT_DIRS = ['content/noticias', 'cms-content/noticias'];
+
+// ====== Helpers ======
+
+function buildSlug(raw?: string) {
+  const base = (raw || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/-+/g, '-')
+    .slice(0, 60)
+    .replace(/^-|-$/g, '');
+  return base || 'sin-slug';
+}
+
+type ParsedFile =
+  | {
+      data: any;
+      content: string;
+    }
+  | null;
+
+async function parseFile(filePath: string): Promise<ParsedFile> {
+  const ext = path.extname(filePath).toLowerCase();
+  const raw = await fs.readFile(filePath, 'utf8');
+
+  if (ext === '.md' || ext === '.markdown') {
+    const parsed = matter(raw);
+    return {
+      data: parsed.data || {},
+      content: parsed.content || '',
+    };
+  }
+
+  if (ext === '.json') {
+    try {
+      const json = JSON.parse(raw);
+      return {
+        data: json.data ?? json,
+        content: json.content ?? json.contenido ?? '',
       };
-      
-      // Insertar o actualizar en Supabase
-      const { error } = await supabase
-        .from('noticias')
-        .upsert(noticiaData, { onConflict: 'slug' });
-        
-      if (error) {
-        console.error(`Error sincronizando ${slug}:`, error);
-        errorCount++;
+    } catch (e) {
+      console.error(`[sync] JSON inválido: ${filePath}`, e);
+      return null;
+    }
+  }
+
+  // extensiones no soportadas
+  return null;
+}
+
+async function walkDir(dir: string): Promise<string[]> {
+  try {
+    const dirents = await fs.readdir(dir, { withFileTypes: true });
+    const files: string[] = [];
+    for (const d of dirents) {
+      const res = path.resolve(dir, d.name);
+      if (d.isDirectory()) {
+        files.push(...(await walkDir(res)));
       } else {
-        console.log(`Sincronizado con éxito: ${slug}`);
-        count++;
+        const ext = path.extname(res).toLowerCase();
+        if (['.md', '.markdown', '.json'].includes(ext)) {
+          files.push(res);
+        }
       }
     }
-    
-    const message = `Sincronización completa: ${count} noticias actualizadas, ${errorCount} errores`;
-    console.log(message);
-    
-    return NextResponse.json({ 
-      success: errorCount === 0,
-      message,
-      updated: count,
-      errors: errorCount
-    });
-  } catch (error) {
-    const errorMessage = 'Error en sincronización: ' + (error instanceof Error ? error.message : 'Error desconocido');
-    console.error(errorMessage);
-    
-    return NextResponse.json({ 
-      success: false, 
-      message: errorMessage
-    }, { status: 500 });
+    return files;
+  } catch (e: any) {
+    if (e.code === 'ENOENT') {
+      // directorio no existe
+      return [];
+    }
+    throw e;
   }
+}
+
+async function upsertNoticia(data: any, content: string) {
+  const slug = buildSlug(data.slug || data.titulo);
+
+  const noticiaData = {
+    titulo: data.titulo ?? '(Sin título)',
+    resumen: data.resumen ?? '',
+    contenido: content ?? '',
+    categoria: data.categoria ?? 'Nacionales',
+    imagen_url: data.imagen_url ?? data.imagen ?? '',
+    destacada: !!data.destacada,
+    slug,
+    autor: data.autor || 'Redacción',
+    fecha_publicacion: data.fecha
+      ? new Date(data.fecha).toISOString()
+      : new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('noticias')
+    .upsert(noticiaData, { onConflict: 'slug' });
+
+  if (error) throw error;
+
+  return slug;
+}
+
+// ====== Handler principal ======
+
+async function runSync() {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return {
+      success: false,
+      message:
+        'Faltan variables de entorno SUPABASE_URL o SUPABASE_SERVICE_ROLE_KEY',
+      updated: 0,
+      errors: 0,
+      processed: 0,
+    };
+  }
+
+  let processed = 0;
+  let updated = 0;
+  let errors = 0;
+  const details: Array<{ file: string; slug?: string; error?: string }> = [];
+
+  // Recorremos los directorios en orden; si alguno tiene archivos, los procesamos
+  for (const baseDir of CONTENT_DIRS) {
+    const absDir = path.join(process.cwd(), baseDir);
+    const files = await walkDir(absDir);
+
+    if (!files.length) continue;
+
+    for (const file of files) {
+      processed++;
+      try {
+        const parsed = await parseFile(file);
+        if (!parsed) {
+          errors++;
+          details.push({ file, error: 'Formato no soportado / JSON inválido' });
+          continue;
+        }
+
+        const { data, content } = parsed;
+
+        if (!data.titulo) {
+          errors++;
+          details.push({ file, error: 'Falta "titulo" en frontmatter/JSON' });
+          continue;
+        }
+
+        const slug = await upsertNoticia(data, content);
+        updated++;
+        details.push({ file, slug });
+      } catch (e: any) {
+        errors++;
+        details.push({ file, error: e?.message ?? 'Error desconocido' });
+        console.error('[sync] Error procesando archivo:', file, e);
+      }
+    }
+
+    // Si ya encontró y procesó en este dir, no seguimos a los siguientes.
+    if (files.length) break;
+  }
+
+  const message = `Sync completo: ${updated} noticias actualizadas, ${errors} errores, ${processed} procesadas.`;
+
+  return {
+    success: errors === 0,
+    message,
+    updated,
+    errors,
+    processed,
+    details,
+  };
+}
+
+// ====== Rutas ======
+export async function GET(req: NextRequest) {
+  // Protección opcional con token
+  if (SYNC_TOKEN) {
+    const token =
+      req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? '';
+    if (token !== SYNC_TOKEN) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
+  const result = await runSync();
+  return NextResponse.json(result, { status: result.success ? 200 : 500 });
+}
+
+export async function POST(req: NextRequest) {
+  // misma lógica que GET, pero soporta POST
+  return GET(req);
 }
