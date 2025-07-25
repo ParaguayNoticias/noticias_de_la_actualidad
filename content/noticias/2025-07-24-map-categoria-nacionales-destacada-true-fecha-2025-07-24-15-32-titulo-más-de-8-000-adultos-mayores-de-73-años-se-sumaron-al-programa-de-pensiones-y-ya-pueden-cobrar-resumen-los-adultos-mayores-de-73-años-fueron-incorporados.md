@@ -20,10 +20,7 @@ contenido: >-
   Los interesados en conocer su situación y saber si ya se encuentran en la lista de beneficiarios, el MDS habilitó el sitio listadoam.mds.gov.py/
 
 
-  `<iframe src="https://x.com/MDSParaguay/status/1947817843782770865" width="600" height="400"></iframe>`
-
-
-  ``<https://x.com/MDSParaguay/status/1947817843782770865>
+  `<iframe src="https://x.com/MDSParaguay/status/1947817843782770865" width="600" height="400"></iframe>`[](https://x.com/MDSParaguay/status/1947817843782770865)
 
 
   Cabe recordar que este programa ejecuta el cumplimiento de la Ley Nº 7322/2024, “Que establece la Pensión Universal para Personas Adultas Mayores y dispone beneficios de acceso e inclusión”.
