@@ -1,56 +1,45 @@
 backend:
   name: github
   repo: ParaguayNoticias/noticias_de_la_actualidad
-  branch: master
+  branch: main
   site_domain: "localhost:3000"
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
     delete: "Eliminada noticia: {{slug}}"
 
-media_folder: "public/uploads"   # Carpeta en el repo
-public_folder: "/uploads"        # Carpeta pública accesible
-
+media_folder: "public/uploads"
+public_folder: "/uploads"
+collections_folder: "content"
 collections:
   - name: "noticias"
     label: "Noticias"
-    label_singular: "Noticia"
-    folder: "content/noticias"
+    folder: "noticias"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
-    editor:
-      preview: false
     fields:
-      - { label: "Título", name: "titulo", widget: "string", hint: "Título principal de la noticia" }
-      - { label: "Resumen", name: "resumen", widget: "text", hint: "Breve resumen para vista previa (máx 160 caracteres)" }
-      - { label: "Contenido", name: "contenido", widget: "markdown", hint: "Contenido completo de la noticia" }
-
+      - { label: "Título", name: "titulo", widget: "string" }
+      - { label: "Resumen", name: "resumen", widget: "text" }
+      - { label: "Contenido", name: "contenido", widget: "markdown" }
       - label: "Categoría"
         name: "categoria"
         widget: "select"
         options:
-          - { label: "Política", value: "politica" }
-          - { label: "Deportes", value: "deportes" }
-          - { label: "Tecnología", value: "tecnologia" }
-          - { label: "Cultura", value: "cultura" }
-          - { label: "Nacionales", value: "nacionales" }
-          - { label: "Internacionales", value: "internacionales" }
+          - { label: "Política", value: "Política" }
+          - { label: "Deportes", value: "Deportes" }
+          - { label: "Tecnología", value: "Tecnología" }
+          - { label: "Cultura", value: "Cultura" }
+          - { label: "Nacionales", value: "Nacionales" }
+          - { label: "Internacionales", value: "Internacionales" }
         default: "nacionales"
-        hint: "Selecciona la categoría principal"
-
       - label: "Imagen Principal"
         name: "imagen"
         widget: "image"
-        hint: "Imagen destacada para la noticia"
-
-      - { label: "Destacada", name: "destacada", widget: "boolean", default: false, hint: "¿Mostrar en la página principal?" }
+        media_library: 
+          config: 
+            cloud_name: process.env.CLOUDINARY_NAME  
+            api_key: process.env.CLOUDINARY_KEY 
+            multiple: false
+      - { label: "Destacada", name: "destacada", widget: "boolean", default: false }
       - { label: "Autor", name: "autor", widget: "string", required: false }
-      - { label: "Slug", name: "slug", widget: "string", pattern: ["^[a-z0-9-]+$", "Solo minúsculas, números y guiones"], hint: "URL única para la noticia (ej: mi-noticia)" }
-
-      - label: "Fecha de Publicación"
-        name: "fecha"
-        widget: "datetime"
-        format: "YYYY-MM-DD HH:mm"
-        date_format: "YYYY-MM-DD"
-        time_format: "HH:mm"
-        hint: "Fecha de publicación (dejar vacío para fecha actual)"
+      - { label: "Slug", name: "slug", widget: "string", pattern: ["^[a-z0-9-]+$", "Solo minúsculas, números y guiones"] }
