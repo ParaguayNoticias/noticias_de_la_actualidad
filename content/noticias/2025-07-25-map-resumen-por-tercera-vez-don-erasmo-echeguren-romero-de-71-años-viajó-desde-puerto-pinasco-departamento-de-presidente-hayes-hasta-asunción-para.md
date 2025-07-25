@@ -30,7 +30,7 @@ contenido: >-
 
 
   Se aseguraba que funcionarios del Programa de Adultos Mayores habían incluido al hombre como beneficiario, garantizando que percibiría su pensión en el mes de julio del corriente año.
-categoria: Nacionales
+categoria: nacionales
 imagen: /uploads/foto-de-erasmo.webp
 destacada: true
 autor: Alcides Manena
