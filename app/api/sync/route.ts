@@ -15,15 +15,23 @@ export async function POST() {
     let errorCount = 0;
     
     for (const file of files) {
-      if (!file.endsWith('.md')) {
-        console.log(`Saltando archivo no markdown: ${file}`);
-        continue;
-      }
+      if (!file.endsWith('.md')) continue;
       
       const filePath = path.join(contentDir, file);
       const fileContent = fs.readFileSync(filePath, 'utf8');
       const { data, content } = matter(fileContent);
-      const slug = file.replace('.md', '');
+      
+      // Extraer slug del nombre del archivo (nuevo formato)
+      const slugFromFilename = file.replace('.md', '').split('-').slice(3).join('-');
+      
+      // Usar slug del frontmatter si existe, si no del nombre del archivo
+      const slug = data.slug || slugFromFilename;
+      
+      // Validar y truncar slug si es necesario
+      const validSlug = slug.slice(0, 60).replace(/[^a-z0-9-]/g, '-');
+      
+      console.log(`Procesando: ${file}`);
+      console.log('Slug original:', slug, 'Slug válido:', validSlug);
       
       console.log(`Procesando: ${slug}`);
       console.log('Datos:', {
@@ -47,7 +55,7 @@ export async function POST() {
         categoria: data.categoria,
         imagen_url: data.imagen,
         destacada: data.destacada || false,
-        slug: slug,
+        slug: validSlug,
         autor: data.autor || 'Redacción',
         fecha_publicacion: data.fecha ? new Date(data.fecha).toISOString() : new Date().toISOString()
       };

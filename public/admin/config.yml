@@ -2,7 +2,7 @@ backend:
   name: github
   repo: ParaguayNoticias/noticias_de_la_actualidad
   branch: master
-  site_domain: "https://noticias-de-la-actualidad.vercel.app/"
+  site_domain: "localhost:3000"
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
@@ -10,16 +10,18 @@ backend:
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
-collections_folder: "content"
+
 collections:
   - name: "noticias"
     label: "Noticias"
-    folder: "noticias"
+    folder: "content/noticias"
     create: true
+    # CAMBIO CLAVE: Usar solo fecha y slug corto
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "Título", name: "titulo", widget: "string" }
       - { label: "Resumen", name: "resumen", widget: "text" }
+      - { label: "Imagen Principal", name: "imagen", widget: "image" }
       - { label: "Contenido", name: "contenido", widget: "markdown" }
       - label: "Categoría"
         name: "categoria"
@@ -31,15 +33,11 @@ collections:
           - { label: "Cultura", value: "Cultura" }
           - { label: "Nacionales", value: "Nacionales" }
           - { label: "Internacionales", value: "Internacionales" }
-        default: "nacionales"
-      - label: "Imagen Principal"
-        name: "imagen"
-        widget: "image"
-        media_library: 
-          config: 
-            cloud_name: process.env.CLOUDINARY_NAME  
-            api_key: process.env.CLOUDINARY_KEY 
-            multiple: false
       - { label: "Destacada", name: "destacada", widget: "boolean", default: false }
-      - { label: "Autor", name: "autor", widget: "string", required: false }
-      - { label: "Slug", name: "slug", widget: "string", pattern: ["^[a-z0-9-]+$", "Solo minúsculas, números y guiones"] }
+      - { 
+          label: "Slug (URL corta)", 
+          name: "slug", 
+          widget: "string", 
+          pattern: ["^[a-z0-9-]{5,60}$", "Solo minúsculas, números y guiones (5-60 caracteres)"],
+          hint: "Identificador corto para la URL (ej: pensiones-adultos-mayores)" 
+        }

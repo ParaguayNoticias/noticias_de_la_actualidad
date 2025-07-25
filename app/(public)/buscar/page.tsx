@@ -1,24 +1,30 @@
+// app/(public)/buscar/page.tsx
 import { redirect } from 'next/navigation';
 import NoticiaCard from '../../components/noticias/NoticiaCard';
 import { supabase } from '../../lib/supabase';
 
-export default async function BuscarPage({
-  searchParams,
-}: {
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const query = searchParams?.q as string | undefined;
-  
+// Tipo para searchParams (ahora puede ser un Promise)
+interface BuscarPageProps {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+}
+
+export default async function BuscarPage({ searchParams }: BuscarPageProps) {
+  const { q: query } = await searchParams; // Esperamos el Promise
+
+  // Si no hay consulta, redirigir a la página principal
   if (!query) {
     redirect('/');
   }
-  
+
+  // Realizar la búsqueda
   const { data: resultados } = await supabase
     .from('noticias')
     .select('*')
     .textSearch('busqueda_tsv', query, {
       config: 'spanish',
-      type: 'websearch'
+      type: 'websearch',
     })
     .limit(20);
 
@@ -27,10 +33,10 @@ export default async function BuscarPage({
       <h1 className="text-2xl md:text-3xl font-bold mb-6">
         Resultados de búsqueda para: <span className="text-blue-600">"{query}"</span>
       </h1>
-      
+
       {resultados && resultados.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {resultados.map(noticia => (
+          {resultados.map((noticia) => (
             <NoticiaCard key={noticia.id} noticia={noticia} />
           ))}
         </div>
