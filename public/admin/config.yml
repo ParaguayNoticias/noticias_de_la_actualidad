@@ -24,6 +24,7 @@ collections:
     folder: "cms-content/noticias"  
     create: true
     slug: "{{slug}}"
+    identifier_field: slug
     fields:
       - { label: "Título", name: "titulo", widget: "string" }
       - { label: "Resumen", name: "resumen", widget: "text" }
