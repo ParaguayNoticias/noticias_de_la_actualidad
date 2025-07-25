@@ -1,8 +1,8 @@
 backend:
   name: github
   repo: ParaguayNoticias/noticias_de_la_actualidad
-  branch: main
-  site_domain: "localhost:3000"
+  branch: master
+  site_domain: "https://noticias-de-la-actualidad.vercel.app/"
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
