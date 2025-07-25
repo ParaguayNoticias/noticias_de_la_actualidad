@@ -11,23 +11,19 @@ contenido: >-
   edad, fueron incluidos al sistema desde julio.
 
 
-  ![Adultos Mayores](/uploads/adultos-mayores.webp "Las personas de 73 años se suman a los que ya pueden cobrar la pensión universal.Foto: Agencia IP")
+  ![Adultos-Mayores](/uploads/adultos-mayores.webp "Las personas de 73 años se suman a los que ya pueden cobrar la pensión universal.Foto: Agencia IP")
 
 
   Estas personas ya están habilitadas para cobrar sus pensiones desde este miércoles, en las agencias del Banco Nacional de Fomento, según informó Desarrollo Social.
 
 
-
-
   Los interesados en conocer su situación y saber si ya se encuentran en la lista de beneficiarios, el MDS habilitó el sitio listadoam.mds.gov.py/
-
 
 
   `<iframe src="https://x.com/MDSParaguay/status/1947817843782770865" width="600" height="400"></iframe>`
 
 
   ``<https://x.com/MDSParaguay/status/1947817843782770865>
-
 
 
   Cabe recordar que este programa ejecuta el cumplimiento de la Ley Nº 7322/2024, “Que establece la Pensión Universal para Personas Adultas Mayores y dispone beneficios de acceso e inclusión”.
@@ -38,9 +34,6 @@ contenido: >-
   El monto de esta pensión equivale al 25% del salario mínimo vigente, que desde julio de este año se fijó en G. 2.899.048, por lo que el monto a percibir sería G. 724.762, según lo establecido por la ley.
 
 
-
-
-
   Progresivamente, este programa deberá llegar a las personas de cierta vulnerabilidad que hayan cumplido los 65 años, a miembros de las comunidades indígenas a partir de 55 años, así como a personas con discapacidad severa a partir de los 60.
 
 
@@ -48,9 +41,6 @@ contenido: >-
 
 
   Unos 340.000 adultos mayores ya fueron incluidos en la pensión y, según había manifestado el mes pasado el ministro de Desarrollo Social, Tadeo Rojas, el ritmo de inclusión al programa es de 40.000 personas por año.
-
-
-
 
 
   El Gobierno prevé alcanzar la cobertura del 100% de las personas que cumplen con los requisitos de recibir la pensión antes de la finalización del actual periodo.
