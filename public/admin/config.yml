@@ -2,7 +2,7 @@ backend:
   name: github
   repo: ParaguayNoticias/noticias_de_la_actualidad
   branch: master
-  site_domain: "https://noticiasdelactualidad.netlify.app"
+  base_url: https://noticiasdelactualidad.netlify.app
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
