@@ -1,8 +1,7 @@
 backend:
-  name: github
-  repo: ParaguayNoticias/noticias_de_la_actualidad
+  name: git-gateway
   branch: master
-  base_url: https://noticiasdelactualidad.netlify.app
+
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
@@ -19,6 +18,8 @@ media_library:
           crop: scale
     unsigned: true
     upload_preset: "noticias_unsigned"
+
+site_url: "https://noticiasdelactualidad.netlify.app"
 
 collections:
   - name: "noticias"
