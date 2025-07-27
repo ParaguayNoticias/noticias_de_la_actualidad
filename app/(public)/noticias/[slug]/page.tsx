@@ -33,7 +33,7 @@ export default async function NoticiaPage({ params }: { params: { slug: string }
             {format(new Date(noticia.fecha_publicacion), 'd MMMM yyyy', { locale: es })}
           </time>
         </div>
-        
+        <p className="text-xl font-light mb-8">{noticia.resumen}</p>
         {imagenUrl && (
           <div className="mb-8">
             <img 
@@ -45,13 +45,12 @@ export default async function NoticiaPage({ params }: { params: { slug: string }
         )}
         
         <div className="prose prose-lg max-w-none">
-          <p className="text-xl font-light mb-8">{noticia.resumen}</p>
-          
           <ReactMarkdown>
             {noticia.contenido}
           </ReactMarkdown>
         </div>
       </article>
+      <div className="Autor"><p><b>Escrito por: {noticia.autor}</b></p></div>
     </div>
   );
 }

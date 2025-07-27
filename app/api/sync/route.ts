@@ -39,7 +39,6 @@ function buildSlug(raw?: string) {
 type ParsedFile =
   | {
       data: any;
-      content: string;
     }
   | null;
 
@@ -49,19 +48,13 @@ async function parseFile(filePath: string): Promise<ParsedFile> {
 
   if (ext === '.md' || ext === '.markdown') {
     const parsed = matter(raw);
-    return {
-      data: parsed.data || {},
-      content: parsed.content || '',
-    };
+    return { data: parsed.data || {} };
   }
 
   if (ext === '.json') {
     try {
       const json = JSON.parse(raw);
-      return {
-        data: json.data ?? json,
-        content: json.content ?? json.contenido ?? '',
-      };
+      return { data: json.data ?? json };
     } catch (e) {
       console.error(`[sync] JSON inválido: ${filePath}`, e);
       return null;
@@ -89,21 +82,18 @@ async function walkDir(dir: string): Promise<string[]> {
     }
     return files;
   } catch (e: any) {
-    if (e.code === 'ENOENT') {
-      // directorio no existe
-      return [];
-    }
+    if (e.code === 'ENOENT') return [];
     throw e;
   }
 }
 
-async function upsertNoticia(data: any, content: string) {
+async function upsertNoticia(data: any) {
   const slug = buildSlug(data.slug || data.titulo);
 
   const noticiaData = {
     titulo: data.titulo ?? '(Sin título)',
     resumen: data.resumen ?? '',
-    contenido: content ?? '',
+    contenido: data.contenido ?? '',
     categoria: data.categoria ?? 'Nacionales',
     imagen_url: data.imagen_url ?? data.imagen ?? '',
     destacada: !!data.destacada,
@@ -119,12 +109,10 @@ async function upsertNoticia(data: any, content: string) {
     .upsert(noticiaData, { onConflict: 'slug' });
 
   if (error) throw error;
-
   return slug;
 }
 
 // ====== Handler principal ======
-
 async function runSync() {
   if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
     return {
@@ -142,7 +130,6 @@ async function runSync() {
   let errors = 0;
   const details: Array<{ file: string; slug?: string; error?: string }> = [];
 
-  // Recorremos los directorios en orden; si alguno tiene archivos, los procesamos
   for (const baseDir of CONTENT_DIRS) {
     const absDir = path.join(process.cwd(), baseDir);
     const files = await walkDir(absDir);
@@ -159,7 +146,7 @@ async function runSync() {
           continue;
         }
 
-        const { data, content } = parsed;
+        const { data } = parsed;
 
         if (!data.titulo) {
           errors++;
@@ -167,7 +154,7 @@ async function runSync() {
           continue;
         }
 
-        const slug = await upsertNoticia(data, content);
+        const slug = await upsertNoticia(data);
         updated++;
         details.push({ file, slug });
       } catch (e: any) {
@@ -176,26 +163,15 @@ async function runSync() {
         console.error('[sync] Error procesando archivo:', file, e);
       }
     }
-
-    // Si ya encontró y procesó en este dir, no seguimos a los siguientes.
     if (files.length) break;
   }
 
   const message = `Sync completo: ${updated} noticias actualizadas, ${errors} errores, ${processed} procesadas.`;
-
-  return {
-    success: errors === 0,
-    message,
-    updated,
-    errors,
-    processed,
-    details,
-  };
+  return { success: errors === 0, message, updated, errors, processed, details };
 }
 
 // ====== Rutas ======
 export async function GET(req: NextRequest) {
-  // Protección opcional con token
   if (SYNC_TOKEN) {
     const token =
       req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? '';
@@ -209,6 +185,5 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  // misma lógica que GET, pero soporta POST
   return GET(req);
 }

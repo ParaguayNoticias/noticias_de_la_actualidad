@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eafffe;
+  --foreground: #575757;
+  --autor: rgb(196, 212, 214);
 }
 
 @theme inline {
@@ -14,8 +15,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #eafffe;
     --foreground: #575757;
+    --autor: rgb(196, 212, 214);
   }
 }
 
@@ -29,4 +31,12 @@ mb-4 {
 }
 .pr-10 {
   margin-left: 2vw;
+}
+
+.Autor {
+    background-color: var(--autor);
+    position: relative;
+    margin: 20px 0px;
+    padding: 20px;
+    text-align: center;
 }

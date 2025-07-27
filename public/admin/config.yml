@@ -9,14 +9,16 @@ backend:
     delete: "Eliminada noticia: {{slug}}"
 
 # Configuración de medios (Cloudinary)
-media_folder: ""  
-public_folder: "" 
 media_library:
   name: cloudinary
   config:
-    cloud_name: process.env.CLOUDINARY_NAME
-    api_key: process.env.CLOUDINARY_KEY
-    multiple: false
+    cloud_name: dsbpou0e4
+    api_key: 538732518741226
+    default_transformations:
+      - - width: 1200
+          crop: scale
+    unsigned: true
+    upload_preset: "noticias_unsigned"
 
 collections:
   - name: "noticias"
