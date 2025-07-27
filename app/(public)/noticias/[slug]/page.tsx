@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 
 type NoticiaPageParams = {
@@ -59,7 +60,7 @@ export default async function NoticiaPage({
         <p className="text-xl font-light mb-8">{noticia.resumen}</p>
         {imagenUrl && (
           <div className="mb-8">
-            <img
+            <Image
               src={imagenUrl}
               alt={noticia.titulo}
               className="w-full h-auto rounded-lg shadow-md"
