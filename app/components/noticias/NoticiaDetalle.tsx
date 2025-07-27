@@ -4,6 +4,7 @@ import { getOptimizedImage } from '../../lib/cloudinary';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
+import Image from 'next/image';
 
 interface NoticiaDetalleProps {
   noticia: Noticia;
@@ -28,7 +29,7 @@ export default function NoticiaDetalle({ noticia }: NoticiaDetalleProps) {
       
       {imagenUrl && (
         <div className="mb-8">
-          <img 
+          <Image 
             src={imagenUrl} 
             alt={noticia.titulo} 
             className="w-full h-auto rounded-lg shadow-md"

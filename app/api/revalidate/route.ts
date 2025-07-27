@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
     revalidatePath(path);
     return Response.json({ revalidated: true, now: Date.now() });
-  } catch (error) {
+  } catch{
     return Response.json({ error: 'Revalidation failed' }, { status: 500 });
   }
 }

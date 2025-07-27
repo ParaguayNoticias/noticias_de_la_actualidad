@@ -55,8 +55,8 @@ async function parseFile(filePath: string): Promise<ParsedFile> {
     try {
       const json = JSON.parse(raw);
       return { data: json.data ?? json };
-    } catch (e) {
-      console.error(`[sync] JSON inválido: ${filePath}`, e);
+    } catch (e: unknown)  {
+      if (e instanceof Error) console.error(e.message);
       return null;
     }
   }

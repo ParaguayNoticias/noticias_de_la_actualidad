@@ -31,7 +31,7 @@ export default async function BuscarPage({ searchParams }: BuscarPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl md:text-3xl font-bold mb-6">
-        Resultados de búsqueda para: <span className="text-blue-600">"{query}"</span>
+        Resultados de búsqueda para: <span className="text-blue-600"> &quot;{query};</span>
       </h1>
 
       {resultados && resultados.length > 0 ? (

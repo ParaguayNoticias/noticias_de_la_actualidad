@@ -12,3 +12,8 @@ export interface Noticia {
   slug: string;
   autor?: string; 
 }
+export interface Paginacion {
+  paginaActual: number;
+  totalPaginas: number;
+  baseUrl: string;
+}
