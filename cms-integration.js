@@ -1,6 +1,7 @@
+import 'dotenv/config';
 const fs = require('fs');
 const path = require('path');
-const matter = require('gray-matter');  // <-- Añadir esta librería
+const matter = require('gray-matter'); 
 const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
@@ -27,7 +28,7 @@ async function syncWithSupabase(filePath, action) {
     const noticiaData = {
       titulo: frontmatter.titulo,
       resumen: frontmatter.resumen,
-      contenido: contenido,  // <-- Guardamos el contenido real
+      contenido: contenido,  
       categoria: frontmatter.categoria,
       imagen_url: frontmatter.imagen_url,
       destacada: frontmatter.destacada || false,

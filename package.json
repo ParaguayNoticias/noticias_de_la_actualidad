@@ -7,7 +7,7 @@
     "cms:watch": "node cms-integration.js",
     "dev": "concurrently \"node cms-integration.js\" \"next dev --turbopack\"",
     "build": "next build",
-    "start": "node cms-integration.js & next start"
+    "start": "next start"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.52.1",
@@ -34,5 +34,8 @@
     "eslint-config-next": "15.4.3",
     "tailwindcss": "^4",
     "typescript": "^5.8.3"
-  }
+  },
+  "engines": {
+  "node": ">=18"
+}
 }
