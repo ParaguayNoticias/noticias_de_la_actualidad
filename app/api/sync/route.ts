@@ -186,10 +186,13 @@ export async function HEAD(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (SYNC_TOKEN) {
-    const token =
-      req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') ?? '';
-    if (token !== SYNC_TOKEN) {
+  if (process.env.SYNC_TOKEN) {
+    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
+    
+    // Comparar con el token almacenado sin revelarlo en logs
+    const isValid = token === process.env.SYNC_TOKEN;
+    
+    if (!isValid) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   }

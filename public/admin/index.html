@@ -65,24 +65,22 @@
         }
       });
     }
-
-    // Mostrar estado de conexión con Supabase
-    function updateConnectionStatus(connected) {
-      const indicator = document.getElementById('status-indicator');
-      indicator.className = connected 
-        ? 'status-indicator status-connected' 
-        : 'status-indicator status-disconnected';
-      indicator.textContent = connected 
-        ? 'Supabase: Conectado' 
-        : 'Supabase: Desconectado';
+    async function checkSupabaseConnection() {
+    try {
+      const response = await fetch('/api/health');
+      if (response.ok) {
+        updateConnectionStatus(true);
+      } else {
+        updateConnectionStatus(false);
+      }
+    } catch (error) {
+      updateConnectionStatus(false);
     }
+  }
 
-    // Verificar conexión con Supabase cada 5 segundos
-    setInterval(() => {
-      fetch('/api/sync', { method: 'HEAD' })
-        .then(() => updateConnectionStatus(true))
-        .catch(() => updateConnectionStatus(false));
-    }, 5000);
+  // Verificar cada 5 segundos
+  setInterval(checkSupabaseConnection, 5000);
+  checkSupabaseConnection(); // Verificar inmediatamente al cargar
   </script>
 </body>
 </html>

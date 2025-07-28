@@ -75,4 +75,4 @@ webhooks:
       - update
       - delete
     headers:
-      Authorization: "Bearer SYNC_TOKEN"
+      Authorization: "Bearer ${SYNC_TOKEN}"
