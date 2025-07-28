@@ -1,3 +1,4 @@
+// app/api/sync/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import path from 'path';
@@ -23,7 +24,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY!);
 const CONTENT_DIRS = ['content/noticias', 'cms-content/noticias'];
 
 // ====== Helpers ======
-
 function buildSlug(raw?: string) {
   const base = (raw || '')
     .normalize('NFD')
@@ -55,7 +55,7 @@ async function parseFile(filePath: string): Promise<ParsedFile> {
     try {
       const json = JSON.parse(raw);
       return { data: json.data ?? json };
-    } catch (e: unknown)  {
+    } catch (e: unknown) {
       if (e instanceof Error) console.error(e.message);
       return null;
     }
@@ -171,6 +171,20 @@ async function runSync() {
 }
 
 // ====== Rutas ======
+export async function HEAD(req: NextRequest) {
+  // Allow HEAD requests without authentication for status checks
+  return NextResponse.json(
+    { status: 'ok' },
+    {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Adjust for production
+        'Access-Control-Allow-Methods': 'HEAD, GET, POST',
+      },
+    }
+  );
+}
+
 export async function GET(req: NextRequest) {
   if (SYNC_TOKEN) {
     const token =
@@ -185,5 +199,5 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  return GET(req);
+  return GET(req); // Reuse GET logic for POST
 }
