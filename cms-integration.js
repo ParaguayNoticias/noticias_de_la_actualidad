@@ -40,7 +40,7 @@ async function syncWithSupabase(filePath, action) {
 
     if (action === 'delete') {
       await supabase.from('noticias').delete().eq('slug', frontmatter.slug);
-      console.log(`Noticia eliminada: ${frontmatter.slug}`);
+      console.log(`🗑️ Noticia eliminada: ${frontmatter.slug}`);
       return;
     }
 
@@ -64,22 +64,22 @@ async function syncWithSupabase(filePath, action) {
 
     if (error) throw error;
 
-    console.log(`Noticia sincronizada: ${frontmatter.slug}`);
+    console.log(`✅ Noticia sincronizada: ${frontmatter.slug}`);
   } catch (error) {
-    console.error(`Error sincronizando ${filePath}:`, error.message);
+    console.error(`❌ Error sincronizando ${filePath}:`, error.message);
   }
 }
 
 // Monitorear cambios en el directorio del CMS
 function watchForChanges() {
-  console.log(`Monitoreando cambios en: ${CMS_DIR}`);
+  console.log(`👀 Monitoreando cambios en: ${CMS_DIR}`);
   
   fs.watch(CMS_DIR, { recursive: true }, (eventType, filename) => {
     if (!filename || !/\.md$/.test(filename)) return;
     
     const filePath = path.join(CMS_DIR, filename);
     
-    console.log(`Evento detectado: ${eventType} en ${filename}`);
+    console.log(`🔁 Evento detectado: ${eventType} en ${filename}`);
     
     if (eventType === 'rename' && !fs.existsSync(filePath)) {
       // Archivo eliminado
@@ -96,4 +96,4 @@ function watchForChanges() {
 
 // Iniciar la sincronización
 watchForChanges();
-console.log('CMS Integration iniciado');
+console.log('🚀 CMS Integration iniciado');

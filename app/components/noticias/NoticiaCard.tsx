@@ -29,7 +29,7 @@ export default function NoticiaCard({
     <article className={`border rounded-lg overflow-hidden shadow-md transition-all hover:shadow-lg ${classes}`}>
       <Link href={`/noticias/${noticia.slug}`} className="block h-full flex flex-col">
         <div className="relative aspect-video">
-          <Image
+          <img
             src={imagenUrl} 
             alt={noticia.titulo} 
             className="w-full h-full object-cover"

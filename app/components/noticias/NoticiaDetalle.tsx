@@ -29,7 +29,7 @@ export default function NoticiaDetalle({ noticia }: NoticiaDetalleProps) {
       
       {imagenUrl && (
         <div className="mb-8">
-          <Image 
+          <img 
             src={imagenUrl} 
             alt={noticia.titulo} 
             className="w-full h-auto rounded-lg shadow-md"
