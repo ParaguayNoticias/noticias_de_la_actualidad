@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "cms:sync": "node cms-integration.js --once",
+    "cms:sync": "node --loader ts-node/esm cms-integration.js",
     "cms:watch": "node cms-integration.js",
     "dev": "concurrently \"node cms-integration.js\" \"next dev --turbopack\"",
     "build": "next build",

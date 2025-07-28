@@ -1,13 +1,11 @@
 backend:
   name: git-gateway
   branch: master
-
   commit_messages:
     create: "Creada noticia: {{slug}}"
     update: "Actualizada noticia: {{slug}}"
     delete: "Eliminada noticia: {{slug}}"
 
-# Configuración de medios (Cloudinary)
 media_library:
   name: cloudinary
   config:
@@ -24,17 +22,21 @@ site_url: "https://noticiasdelactualidad.netlify.app"
 collections:
   - name: "noticias"
     label: "Noticias"
-    folder: "cms-content/noticias"  
+    folder: "cms-content/noticias"
     create: true
     slug: "{{slug}}"
     identifier_field: slug
     fields:
-      - { label: "Título", name: "titulo", widget: "string" }
-      - { label: "Resumen", name: "resumen", widget: "text" }
+      - { label: "Título", name: "titulo", widget: "string", required: true }
+      - { label: "Resumen", name: "resumen", widget: "text", required: true }
       - label: "Imagen Principal"
         name: "imagen_url"
         widget: "image"
-      - { label: "Contenido", name: "contenido", widget: "markdown" }
+        required: true
+        media_library: 
+          config: 
+            multiple: false
+      - { label: "Contenido", name: "contenido", widget: "markdown", required: true }
       - label: "Categoría"
         name: "categoria"
         widget: "select"
@@ -45,19 +47,32 @@ collections:
           - { label: "Cultura", value: "Cultura" }
           - { label: "Nacionales", value: "Nacionales" }
           - { label: "Internacionales", value: "Internacionales" }
+        default: "Nacionales"
       - { label: "Destacada", name: "destacada", widget: "boolean", default: false }
       - { 
           label: "Slug (URL corta)", 
           name: "slug", 
           widget: "string", 
           pattern: ["^[a-z0-9-]{5,60}$", "Solo minúsculas, números y guiones (5-60 caracteres)"],
-          hint: "Identificador corto para la URL (ej: pensiones-adultos-mayores)" 
+          hint: "Identificador corto para la URL (ej: pensiones-adultos-mayores)",
+          required: true 
         }
-      - { label: "Autor", name: "autor", widget: "string" }
-      - {label: "Fecha de Publicación",
-        name: "fecha",
-        widget: "datetime",
-        format: "YYYY-MM-DD HH:mm",
-        date_format: "YYYY-MM-DD",
-        time_format: "HH:mm",
-        hint: "Fecha de publicación (dejar vacío para fecha actual)"}
+      - { label: "Autor", name: "autor", widget: "string", default: "Redacción" }
+      - label: "Fecha de Publicación"
+        name: "fecha"
+        widget: "datetime"
+        format: "YYYY-MM-DD HH:mm"
+        date_format: "YYYY-MM-DD"
+        time_format: "HH:mm"
+        default: ""
+        hint: "Fecha de publicación (dejar vacío para fecha actual)"
+webhooks:
+  - name: sync-supabase
+    url: https://noticiasdelactualidad.netlify.app/api/sync
+    method: POST
+    events:
+      - create
+      - update
+      - delete
+    headers:
+      Authorization: "Bearer SYNC_TOKEN"
