@@ -36,8 +36,8 @@ collections:
         widget: "image"
         media_library: 
           config: 
-            cloud_name: process.env.CLOUDINARY_NAME
-            api_key: process.env.CLOUDINARY_KEY
+            cloud_name: dsbpou0e4
+            api_key: 538732518741226
             multiple: false
       - { label: "Contenido", name: "contenido", widget: "markdown" }
       - label: "Categoría"
