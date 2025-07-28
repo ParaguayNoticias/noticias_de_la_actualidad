@@ -14,7 +14,16 @@
   <!-- Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
+  <!-- Cloudinary Media Library -->
+  <script src="https://unpkg.com/netlify-cms-media-library-cloudinary/dist/index.js"></script>
+
   <script>
+    // Registrar Cloudinary en Decap CMS
+    if (typeof cloudinary !== "undefined") {
+      CMS.registerMediaLibrary(cloudinary);
+    }
+
+    // Manejar Netlify Identity
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", user => {
         if (!user) {
@@ -25,10 +34,5 @@
       });
     }
   </script>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <script>
-    CMS.registerMediaLibrary(cloudinary);
-  </script>
-  <script src="https://unpkg.com/netlify-cms-media-library-cloudinary/dist/index.js"></script>  
 </body>
 </html>
