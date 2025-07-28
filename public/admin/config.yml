@@ -34,11 +34,6 @@ collections:
       - label: "Imagen Principal"
         name: "imagen_url"
         widget: "image"
-        media_library: 
-          config: 
-            cloud_name: dsbpou0e4
-            api_key: 538732518741226
-            multiple: false
       - { label: "Contenido", name: "contenido", widget: "markdown" }
       - label: "Categoría"
         name: "categoria"
