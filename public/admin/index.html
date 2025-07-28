@@ -6,20 +6,28 @@
   <title>Administrador de Noticias</title>
 </head>
 <body>
-  <script src="https://unpkg.com/netlify-identity-widget@1.9.1/build/netlify-identity-widget.min.js"></script>
+  <!-- Carga el widget de Netlify Identity -->
+  <script src="https://unpkg.com/netlify-identity-widget@1.9.2/build/netlify-identity-widget.js"></script>
+  <!-- Carga Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   
   <script>
-    // Inicializar Netlify Identity Widget
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
-    }
+    // Inicializa Netlify Identity
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        // Si no hay usuario logueado, abre el modal de login
+        window.netlifyIdentity.on("login", () => {
+          // Redirige al panel de administración tras iniciar sesión
+          window.location.href = "/admin/";
+        });
+      } else {
+        // Si ya está logueado, redirige al panel de administración
+        window.location.href = "/admin/";
+      }
+    });
+
+    // Inicializa Decap CMS
+    window.CMS.init();
   </script>
 </body>
 </html>
