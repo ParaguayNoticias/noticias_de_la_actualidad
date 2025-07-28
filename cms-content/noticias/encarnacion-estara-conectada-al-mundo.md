@@ -24,12 +24,6 @@ contenido: >-
   En ese sentido, Mendoza anunció que el aeropuerto de Encarnación Teniente Amín Ayub será elevado a la categoría internacional H24, lo que significa que podrá recibir vuelos internacionales durante las 24 horas con aeronaves de distintos tamaños, desde los jets privados hasta aviones como los Airbus 319 y 320, especialmente de cara al Mundial de Rally.
 
 
-  `<iframe width="560" height="315" src="`[`https://res.cloudinary.com/dsbpou0e4/video/upload/v1753673612/rally_yfnuzt.mp4`](https://res.cloudinary.com/dsbpou0e4/video/upload/v1753673612/rally_yfnuzt.mp4)`" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`
-
-
-
-
-
   En ese sentido, según proyecciones realizadas por organizadores del WRC, se estima que durante los días del evento se registrarán entre 150 y 200 vuelos, que movilizaría alrededor de 200 mil personas.
 
 
@@ -40,9 +34,6 @@ contenido: >-
 
 
   ### Importantes obras de infraestructura y equipamiento
-
-
-
 
 
   En la ocasión, el titular de la Dinac, brindó detalles de los trabajos que se vienen ejecutando en el aeropuerto de Encarnación, que cuenta con una pista de aterrizaje de 2.000 metros de longitud en perfectas condiciones para el aterrizaje de aviones de gran porte.
@@ -70,9 +61,6 @@ contenido: >-
 
 
   ### Seguridad interinstitucional
-
-
-
 
 
   En lo que respecta a la seguridad en tierra, se instalaron equipos portátiles de rayos X y una dotación de funcionarios de la Dirección Nacional de Ingresos Tributarios (DNIT), Secretaría Nacional Antidrogas (Senad), Policía Nacional, Servicio Nacional de Calidad y Sanidad Vegetal y de Semillas (Senave), Departamento Técnico Aduanero de Vigilancia Especializada (Detave), Fuerza Aérea, entre otros.
