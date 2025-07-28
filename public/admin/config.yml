@@ -68,11 +68,9 @@ collections:
         hint: "Fecha de publicación (dejar vacío para fecha actual)"
 webhooks:
   - name: sync-supabase
-    url: https://noticiasdelactualidad.netlify.app/api/sync
+    url: https://api.netlify.com/build_hooks/68877d2d2f1693f1c13909cb
     method: POST
     events:
       - create
       - update
       - delete
-    headers:
-      Authorization: "Bearer ${SYNC_TOKEN}"
