@@ -3,7 +3,7 @@ titulo: Diputada pide que no se golpee al turismo con absorción de Senatur
 resumen: Desde el Gobierno se anuncia la absorción de la Secretaría Nacional de
   Turismo (Senatur) por parte del Ministerio de Industria y Comercio. ¿Por qué?,
   ¿para qué?, se pregunta la diputada de Patria Querida, Rocío Vallejo.
-imagen_url: https://grupovierci.brightspotcdn.com/dims4/default/9300bbd/2147483647/strip/true/crop/1600x901+0+177/resize/1000x563!/format/webp/quality/90/?url=https%3A%2F%2Fk2-prod-grupo-vierci.s3.us-east-1.amazonaws.com%2Fbrightspot%2F26%2F83%2F742e990345e4bfa5cbe3080d5a73%2Fsecretaria-nacional-de-turismo-senatur-municipalidad-de-asuncion.jpeg
+imagen_url: https://res.cloudinary.com/dsbpou0e4/image/upload/v1753673109/diputada_f1xrkn.webp
 contenido: >-
   
 
