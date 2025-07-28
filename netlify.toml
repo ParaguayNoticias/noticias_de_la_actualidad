@@ -14,5 +14,5 @@
   to = "/admin/index.html"
   status = 200
 
-  [[plugins]]
+[[plugins]]
   package = "@netlify/plugin-nextjs"
