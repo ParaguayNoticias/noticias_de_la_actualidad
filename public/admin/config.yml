@@ -68,7 +68,7 @@ collections:
         hint: "Fecha de publicación (dejar vacío para fecha actual)"
 webhooks:
   - name: sync-supabase
-    url: https://api.netlify.com/build_hooks/68877d2d2f1693f1c13909cb
+    url: https://api.netlify.com/build_hooks/6888b44bbd3c0700ba910e78
     method: POST
     events:
       - create

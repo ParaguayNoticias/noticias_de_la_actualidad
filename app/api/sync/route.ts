@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import path from 'path';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
+import { updateSyncStatus } from '../sync-status/route';
 
 export const runtime = 'nodejs';
 
@@ -200,7 +201,31 @@ export async function GET(req: NextRequest) {
   const result = await runSync();
   return NextResponse.json(result, { status: result.success ? 200 : 500 });
 }
-
 export async function POST(req: NextRequest) {
-  return GET(req); // Reuse GET logic for POST
+  if (SYNC_TOKEN) {
+    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
+    if (token !== SYNC_TOKEN) {
+      console.error('[sync] Intento no autorizado');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
+  try {
+    const result = await runSync();
+    
+    // Notificar por email en caso de errores
+    if (result.errors > 0) {
+      await sendErrorNotification(result);
+    }
+    updateSyncStatus(result)
+    return NextResponse.json(result, { status: result.success ? 200 : 500 });
+  } catch (e: any) {
+    console.error('[sync] Error crítico:', e);
+    return NextResponse.json({ error: 'Server Error' }, { status: 500 });
+  }
+}
+
+async function sendErrorNotification(result: any) {
+  // Implementar notificación por email o Slack
+  console.warn(`[sync] Errores detectados: ${result.errors}`);
 }
