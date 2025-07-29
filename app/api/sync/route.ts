@@ -25,6 +25,23 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY!);
 const CONTENT_DIRS = ['cms-content/noticias'];
 
 // ====== Helpers ======
+function isFromNetlify(req: NextRequest): boolean {
+  const userAgent = req.headers.get('user-agent') || '';
+  const referer = req.headers.get('referer') || '';
+  const netlifyUA = userAgent.toLowerCase().includes('netlify');
+  const netlifyReferer = referer.includes('netlify');
+
+  return netlifyUA || netlifyReferer;
+}
+
+function isAuthorized(req: NextRequest): boolean {
+  const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
+  if (!SYNC_TOKEN) return true; // Si no hay token definido, dejar pasar
+  if (token === SYNC_TOKEN) return true;
+  if (isFromNetlify(req)) return true;
+  return false;
+}
+
 function buildSlug(raw?: string) {
   const base = (raw || '')
     .normalize('NFD')
@@ -40,7 +57,7 @@ function buildSlug(raw?: string) {
 type ParsedFile =
   | {
       data: any;
-      content?: string; // Add content for Markdown files
+      content?: string;
     }
   | null;
 
@@ -178,7 +195,7 @@ export async function HEAD(req: NextRequest) {
     {
       status: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*', // Adjust for production
+        'Access-Control-Allow-Origin': 'https://noticiasdelactualidad.netlify.app',
         'Access-Control-Allow-Methods': 'HEAD, GET, POST',
       },
     }
@@ -186,12 +203,9 @@ export async function HEAD(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (SYNC_TOKEN) {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
-    if (token !== SYNC_TOKEN) {
-      console.error('[sync] Intento no autorizado');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  if (!isAuthorized(req)) {
+    console.error('[sync] Intento no autorizado');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const result = await runSync();
@@ -200,12 +214,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (SYNC_TOKEN) {
-    const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
-    if (token !== SYNC_TOKEN) {
-      console.error('[sync] Intento no autorizado');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+  if (!isAuthorized(req)) {
+    console.error('[sync] Intento no autorizado');
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {

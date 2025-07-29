@@ -9,6 +9,9 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Noticias de la actualidad',
   description: 'Portal de noticias que afectan a Paraguay',
+  icons: {
+    icon: "/Noticias-de-la-actualidad.svg",
+  },  
 };
 
 export default function RootLayout({
