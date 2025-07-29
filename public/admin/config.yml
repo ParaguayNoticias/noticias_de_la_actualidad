@@ -66,8 +66,11 @@ collections:
         time_format: "HH:mm"
         default: ""
         hint: "Fecha de publicación (dejar vacío para fecha actual)"
-[[webhooks]]
-  name = "sync-supabase"
-  url = "https://noticiasdelactualidad.netlify.app/api/sync"
-  method = "POST"
-  events = ["create", "update", "delete"]
+webhooks:
+  - name: sync-supabase
+    url: https://noticiasdelactualidad.netlify.app/api/sync
+    method: POST
+    events:
+      - create
+      - update
+      - delete
