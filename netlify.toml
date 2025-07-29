@@ -13,3 +13,9 @@
   from = "/admin/*"
   to = "/admin/index.html"
   status = 200
+  
+[[webhooks]]
+  name = "sync-supabase"
+  url = "https://noticiasdelactualidad.netlify.app/api/sync"
+  method = "POST"
+  events = ["create", "update", "delete"]

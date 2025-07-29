@@ -4,7 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 import path from 'path';
 import { promises as fs } from 'fs';
 import matter from 'gray-matter';
-import { updateSyncStatus } from '../sync-status/route';
+import { updateSyncStatus } from '../../lib/syncStatus';
 
 export const runtime = 'nodejs';
 
@@ -22,7 +22,7 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY!);
 
-const CONTENT_DIRS = ['content/noticias', 'cms-content/noticias'];
+const CONTENT_DIRS = ['cms-content/noticias'];
 
 // ====== Helpers ======
 function buildSlug(raw?: string) {
@@ -40,6 +40,7 @@ function buildSlug(raw?: string) {
 type ParsedFile =
   | {
       data: any;
+      content?: string; // Add content for Markdown files
     }
   | null;
 
@@ -49,7 +50,7 @@ async function parseFile(filePath: string): Promise<ParsedFile> {
 
   if (ext === '.md' || ext === '.markdown') {
     const parsed = matter(raw);
-    return { data: parsed.data || {} };
+    return { data: parsed.data || {}, content: parsed.content };
   }
 
   if (ext === '.json') {
@@ -62,7 +63,6 @@ async function parseFile(filePath: string): Promise<ParsedFile> {
     }
   }
 
-  // extensiones no soportadas
   return null;
 }
 
@@ -88,13 +88,13 @@ async function walkDir(dir: string): Promise<string[]> {
   }
 }
 
-async function upsertNoticia(data: any) {
+async function upsertNoticia(data: any, content?: string) {
   const slug = buildSlug(data.slug || data.titulo);
 
   const noticiaData = {
     titulo: data.titulo ?? '(Sin título)',
     resumen: data.resumen ?? '',
-    contenido: data.contenido ?? '',
+    contenido: content ?? data.contenido ?? '',
     categoria: data.categoria ?? 'Nacionales',
     imagen_url: data.imagen_url ?? data.imagen ?? '',
     destacada: !!data.destacada,
@@ -147,7 +147,7 @@ async function runSync() {
           continue;
         }
 
-        const { data } = parsed;
+        const { data, content } = parsed;
 
         if (!data.titulo) {
           errors++;
@@ -155,7 +155,7 @@ async function runSync() {
           continue;
         }
 
-        const slug = await upsertNoticia(data);
+        const slug = await upsertNoticia(data, content);
         updated++;
         details.push({ file, slug });
       } catch (e: any) {
@@ -173,7 +173,6 @@ async function runSync() {
 
 // ====== Rutas ======
 export async function HEAD(req: NextRequest) {
-  // Allow HEAD requests without authentication for status checks
   return NextResponse.json(
     { status: 'ok' },
     {
@@ -187,20 +186,19 @@ export async function HEAD(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  if (process.env.SYNC_TOKEN) {
+  if (SYNC_TOKEN) {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
-    
-    // Comparar con el token almacenado sin revelarlo en logs
-    const isValid = token === process.env.SYNC_TOKEN;
-    
-    if (!isValid) {
+    if (token !== SYNC_TOKEN) {
+      console.error('[sync] Intento no autorizado');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
   }
 
   const result = await runSync();
+  updateSyncStatus(result);
   return NextResponse.json(result, { status: result.success ? 200 : 500 });
 }
+
 export async function POST(req: NextRequest) {
   if (SYNC_TOKEN) {
     const token = req.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
@@ -212,12 +210,10 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = await runSync();
-    
-    // Notificar por email en caso de errores
     if (result.errors > 0) {
       await sendErrorNotification(result);
     }
-    updateSyncStatus(result)
+    updateSyncStatus(result);
     return NextResponse.json(result, { status: result.success ? 200 : 500 });
   } catch (e: any) {
     console.error('[sync] Error crítico:', e);
@@ -226,6 +222,5 @@ export async function POST(req: NextRequest) {
 }
 
 async function sendErrorNotification(result: any) {
-  // Implementar notificación por email o Slack
   console.warn(`[sync] Errores detectados: ${result.errors}`);
 }
