@@ -1,5 +1,5 @@
 [build]
-  command = "npm run cms:sync && npm run build"
+  command = "npm run cms:watch && npm run build"
   publish = ".next"
 
 [[plugins]]
